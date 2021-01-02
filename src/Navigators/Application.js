@@ -1,39 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
-import { IndexStartupContainer } from '@/Containers'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+//import { IndexStartupContainer } from "@/Containers";
+import { useSelector } from "react-redux";
+import Login from "@/Containers/auth/login";
+import Register from "@/Containers/auth/register";
+import { MainNavigator } from ".";
 
-const Stack = createStackNavigator()
-
-let MainNavigator
+const Stack = createStackNavigator();
 
 // @refresh reset
 const ApplicationNavigator = () => {
-  const [isApplicationLoaded, setIsApplicationLoaded] = useState(false)
-
-  const applicationIsLoading = useSelector((state) => state.startup.loading)
-
-  useEffect(() => {
-    if (MainNavigator == null && !applicationIsLoading) {
-      MainNavigator = require('@/Navigators/Main').default
-      setIsApplicationLoaded(true)
-    }
-  }, [applicationIsLoading])
-
   return (
-    <Stack.Navigator headerMode={'none'}>
-      <Stack.Screen name="Startup" component={IndexStartupContainer} />
-      {isApplicationLoaded && (
-        <Stack.Screen
-          name="Main"
-          component={MainNavigator}
-          options={{
-            animationEnabled: false,
-          }}
-        />
-      )}
+    <Stack.Navigator headerMode={"none"} initialRouteName="Login">
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen
+        name="Main"
+        component={MainNavigator}
+        options={{
+          animationEnabled: false,
+        }}
+      />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default ApplicationNavigator
+export default ApplicationNavigator;

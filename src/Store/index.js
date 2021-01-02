@@ -1,51 +1,28 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { combineReducers } from 'redux'
-import {
-  persistReducer,
-  persistStore,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist'
-import { configureStore } from '@reduxjs/toolkit'
-
-import startup from './Startup'
-import user from './User'
-
-const reducers = combineReducers({
-  startup,
-  user,
-})
+import { createStore, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
+import { persistReducer, persistStore } from "redux-persist";
+import rootSaga from "./sagas";
+import rootReducer from "./rootReducer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const sagaMiddleware = createSagaMiddleware();
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage: AsyncStorage,
-  whitelist: [],
-}
+  /**
+   * Blacklist state that we do not need/want to persist
+   */
+  blacklist: [
+    // 'auth',
+  ],
+};
 
-const persistedReducer = persistReducer(persistConfig, reducers)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) => {
-    const middlewares = getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    })
+const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 
-    if (__DEV__ && !process.env.JEST_WORKER_ID) {
-      const createDebugger = require('redux-flipper').default
-      middlewares.push(createDebugger())
-    }
+sagaMiddleware.run(rootSaga);
 
-    return middlewares
-  },
-})
+const persistor = persistStore(store);
 
-const persistor = persistStore(store)
-
-export { store, persistor }
+export { store, persistor };

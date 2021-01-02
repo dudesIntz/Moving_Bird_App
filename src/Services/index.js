@@ -1,24 +1,115 @@
-import axios from 'axios'
-import { Config } from '@/Config'
+import axios from "axios";
 
-const instance = axios.create({
-  baseURL: Config.API_URL,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-  timeout: 3000,
-})
+class Service {
+  service;
+  constructor() {
+    const service = axios.create({
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    service.interceptors.request.use(
+      (config) => {
+        if (!config.headers.Authorization) {
+          const token = getAuth().token;
 
-export const handleError = ({ message, data, status }) => {
-  return Promise.reject({ message, data, status })
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        }
+
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+    service.interceptors.response.use(this.handleSuccess, this.handleError);
+    this.service = service;
+  }
+
+  handleSuccess(response) {
+    console.log(response);
+    return response;
+  }
+  isTokenExpiredError = (errorResponse) => {
+    // Your own logic to determine if the error is due to JWT token expired returns a boolean value
+    if (errorResponse && errorResponse.status && errorResponse.status === 401) {
+      return true;
+    }
+    return false;
+  };
+
+  handleError = (error) => {
+    const errorResponse = error.response;
+
+    return errorResponse;
+  };
+
+  redirectTo = (document, path) => {
+    document.location = path;
+  };
+
+  get = (path, options = { headers: {} }) => {
+    return this.service.get(path, options).then((response) => response.data);
+  };
+
+  patch = (path, payload, header) => {
+    return this.service
+      .request({
+        method: "PATCH",
+        url: path,
+        responseType: "json",
+        data: payload,
+        headers: header,
+      })
+      .then((response) => {
+        return response.data;
+      });
+  };
+
+  post = (path, payload, header = {}) => {
+    return this.service
+      .request({
+        method: "POST",
+        url: path,
+        responseType: "json",
+        data: payload,
+
+        headers: header,
+      })
+      .then((response) => {
+        console.log(response, "res");
+        return response;
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  put = (path, payload, header) => {
+    return this.service
+      .request({
+        method: "PUT",
+        url: path,
+        responseType: "json",
+        data: payload,
+        headers: header,
+      })
+      .then((response) => response.data);
+  };
+
+  delete = (path, payload, header) => {
+    return this.service
+      .request({
+        method: "DELETE",
+        url: path,
+        responseType: "json",
+        data: payload,
+        headers: header,
+      })
+      .then((response) => response.data);
+  };
 }
 
-instance.interceptors.response.use(
-  (response) => response,
-  ({ message, response: { data, status } }) => {
-    return handleError({ message, data, status })
-  },
-)
+const service = new Service();
 
-export default instance
+export default service;

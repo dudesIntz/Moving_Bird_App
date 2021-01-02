@@ -1,14 +1,18 @@
-import 'react-native-gesture-handler'
-import React from 'react'
-import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/lib/integration/react'
-import { store, persistor } from '@/Store'
-import { SafeAreaView, StatusBar } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
-import { ApplicationNavigator } from '@/Navigators'
-import { navigationRef } from '@/Navigators/Root'
-import { Layout } from '@/Theme'
-import './Translations'
+import "react-native-gesture-handler";
+import React from "react";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/lib/integration/react";
+import { store, persistor } from "@/Store";
+import { SafeAreaView, StatusBar } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { ApplicationNavigator } from "@/Navigators";
+import { navigationRef } from "@/Navigators/Root";
+import { Layout } from "@/Theme";
+
+import DropdownAlert from "react-native-dropdownalert";
+
+import "./Translations";
+import { dropdownAlertRef } from "./Utils";
 
 const App = () => (
   <Provider store={store}>
@@ -25,9 +29,10 @@ const App = () => (
           <StatusBar barStyle="dark-content" />
           <ApplicationNavigator />
         </NavigationContainer>
+        <DropdownAlert ref={dropdownAlertRef} closeInterval={6000} />
       </SafeAreaView>
     </PersistGate>
   </Provider>
-)
+);
 
-export default App
+export default App;

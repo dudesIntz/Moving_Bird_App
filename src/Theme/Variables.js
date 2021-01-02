@@ -9,14 +9,15 @@
  * Colors
  */
 export const Colors = {
-  transparent: 'rgba(0,0,0,0)',
+  transparent: "rgba(0,0,0,0)",
   // Example colors:
-  white: '#ffffff',
-  text: '#212529',
-  primary: '#E14032',
-  success: '#28a745',
-  error: '#dc3545',
-}
+  white: "#ffffff",
+  text: "#34cdad",
+  primary: "#34cdad",
+  success: "#28a745",
+  error: "#dc3545",
+  gray: "#808080cf",
+};
 
 /**
  * FontSize
@@ -25,18 +26,18 @@ export const FontSize = {
   small: 12,
   regular: 14,
   large: 18,
-}
+};
 
 /**
  * Metrics Sizes
  */
-const tiny = 5 // 10
-const small = tiny * 2 // 10
-const regular = tiny * 3 // 15
-const large = regular * 2 // 30
+const tiny = 5; // 5
+const small = tiny * 2; // 10
+const regular = tiny * 3; // 15
+const large = regular * 2; // 30
 export const MetricsSizes = {
   tiny,
   small,
   regular,
   large,
-}
+};
